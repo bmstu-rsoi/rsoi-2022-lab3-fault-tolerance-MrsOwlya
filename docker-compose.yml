@@ -1,6 +1,6 @@
 version: "3"
 services:
-  postgres:
+  db:
     image: library/postgres:13
     container_name: postgres
     restart: on-failure
@@ -13,6 +13,102 @@ services:
       - ./postgres/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
+  gateway:
+    build: ./GatewayService/
+    container_name: gateway
+    restart: on-failure
+    command:  >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8080"
+    volumes:
+      - ./GatewayService/:/GatewayService/
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    ports:
+      - '8080:8080'
+    env_file:
+      - ./GatewayService/.env.dev
+    depends_on:
+      - redis
+
+  ticket:
+    build: ./TicketService/
+    container_name: ticket
+    restart: on-failure
+    command:  >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8070"
+    volumes:
+      - ./TicketService/:/TicketService/
+    ports:
+      - '8070:8070'
+    env_file:
+      - ./TicketService/.env.dev
+    depends_on:
+      - db
+      - redis
+
+  flight:
+    build: ./FlightService/
+    container_name: flight
+    restart: on-failure
+    command:  >
+      sh -c "python manage.py migrate &&
+             python manage.py loaddata dump.json &&
+             python manage.py runserver 0.0.0.0:8060"
+    volumes:
+      - ./FlightService/:/FlightService/
+    ports:
+      - '8060:8060'
+    env_file:
+      - ./FlightService/.env.dev
+    depends_on:
+      - db
+      - redis
+
+  bonus:
+    build: ./BonusService/
+    container_name: bonus
+    restart: on-failure
+    command:  >
+      sh -c "python manage.py migrate &&
+             python manage.py loaddata dump.json &&
+             python manage.py runserver 0.0.0.0:8050"
+    volumes:
+      - ./BonusService/:/BonusService/
+    ports:
+      - '8050:8050'
+    env_file:
+      - ./BonusService/.env.dev
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: ./GatewayService/
+    container_name: celery
+    command: celery -A GatewayService worker -l info
+    volumes:
+      - ./GatewayService/:/GatewayService/
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    env_file:
+      - ./GatewayService/.env.dev
+    depends_on:
+      - gateway
+      - redis
 
 # TODO добавить сервисы
 

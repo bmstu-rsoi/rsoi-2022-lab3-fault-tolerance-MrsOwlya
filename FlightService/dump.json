@@ -1,0 +1,31 @@
+[
+{
+  "model": "flight.airport",
+  "pk": 1,
+  "fields": {
+    "name": "Шереметьево",
+    "city": "Москва",
+    "country": "Россия"
+  }
+},
+{
+  "model": "flight.airport",
+  "pk": 2,
+  "fields": {
+    "name": "Пулково",
+    "city": "Санкт-Петербург",
+    "country": "Россия"
+  }
+},
+{
+  "model": "flight.flight",
+  "pk": 1,
+  "fields": {
+    "flight_number": "AFL031",
+    "datetime": "2021-10-08T18:00:00Z",
+    "from_airport_id": 2,
+    "to_airport_id": 1,
+    "price": 1500
+  }
+}
+]

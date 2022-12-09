@@ -1,0 +1,20 @@
+[
+{
+  "model": "bonus.privilege",
+  "pk": 1,
+  "fields": {
+    "username": "owlya",
+    "status": "GOLD",
+    "balance": 5000
+  }
+},
+{
+  "model": "bonus.privilege",
+  "pk": 2,
+  "fields": {
+    "username": "Test Max",
+    "status": "GOLD",
+    "balance": 5000
+  }
+}
+]
