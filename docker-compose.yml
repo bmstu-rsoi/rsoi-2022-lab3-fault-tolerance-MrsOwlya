@@ -35,6 +35,7 @@ services:
     env_file:
       - ./GatewayService/.env.dev
     depends_on:
+      - db
       - redis
       - bonus
       - flight

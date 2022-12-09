@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+echo "AAAAAAAAAAAAAAAAAAAAAAAAAAA"
 IFS="," read -ra PORTS <<<"$WAIT_PORTS"
 path=$(dirname "$0")
 
