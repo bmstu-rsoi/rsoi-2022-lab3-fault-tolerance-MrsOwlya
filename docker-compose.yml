@@ -17,7 +17,7 @@ services:
   redis:
     image: redis:6.2-alpine
     container_name: redis
-    restart: always
+    restart: on-failure
     ports:
       - '6379:6379'
 
@@ -30,10 +30,6 @@ services:
              python manage.py runserver 0.0.0.0:8080"
     volumes:
       - ./GatewayService/:/GatewayService/
-    environment:
-      - DEBUG=1
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
     ports:
       - '8080:8080'
     env_file:
@@ -97,13 +93,10 @@ services:
   celery:
     build: ./GatewayService/
     container_name: celery
+    restart: on-failure
     command: celery -A GatewayService worker -l info
     volumes:
       - ./GatewayService/:/GatewayService/
-    environment:
-      - DEBUG=1
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
     env_file:
       - ./GatewayService/.env.dev
     depends_on:
