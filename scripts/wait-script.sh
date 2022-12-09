@@ -9,11 +9,6 @@ for port in "${PORTS[@]}"; do
   PIDs+=($!)
 done
 
-curl -o /dev/null -s -w "http://localhost:8080/manage/health: %{http_code}\n" http://localhost:8080/manage/health
-curl -o /dev/null -s -w "http://localhost:8070/manage/health: %{http_code}\n" http://localhost:8070/manage/health
-curl -o /dev/null -s -w "http://localhost:8060/manage/health: %{http_code}\n" http://localhost:8060/manage/health
-curl -o /dev/null -s -w "http://localhost:8050/manage/health: %{http_code}\n" http://localhost:8050/manage/health
-
 for pid in "${PIDs[@]}"; do
   if ! wait "${pid}"; then
     exit 1
