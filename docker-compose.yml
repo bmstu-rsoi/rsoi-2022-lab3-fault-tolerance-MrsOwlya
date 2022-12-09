@@ -36,6 +36,9 @@ services:
       - ./GatewayService/.env.dev
     depends_on:
       - redis
+      - bonus
+      - flight
+      - ticket
 
   ticket:
     build: ./TicketService/
